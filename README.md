@@ -1,66 +1,96 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Kerangka Aplikasi Absensi Pembelajaran Siswa (Laravel + PWA)
+Role Pengguna:
+Admin
+Wali Kelas
+Guru Pengampu
+Guru BK
+1. Admin
+Impor Data Siswa: Mengimpor data siswa dari file eksternal (CSV, Excel).
+Kelola Data Pengguna: Mengelola akun pengguna seperti Wali Kelas, Guru Pengampu, dan Guru BK.
+Laporan Statistik: Mengakses laporan absensi siswa (harian, mingguan, bulanan, dan per semester).
+2. Wali Kelas
+Mengelola Data Siswa di Kelas: Menambah dan menghapus siswa dari kelas yang dipimpin.
+Memberi Keterangan Absensi: Memberikan keterangan alasan untuk siswa yang tidak hadir (sakit, izin, dll.).
+Menerima Notifikasi Absensi: Notifikasi otomatis jika ada siswa yang tidak hadir.
+Laporan Statistik: Mengakses laporan absensi siswa untuk bahan referensi harian, mingguan, bulanan, dan per semester.
+Pemantauan Ketidakhadiran Siswa: Melaporkan siswa dengan tingkat ketidakhadiran tinggi ke Guru BK untuk pemanggilan orang tua.
+Fitur Pengingat (Reminder): Pengingat untuk memastikan keterangan absensi atau pemanggilan orang tua dilakukan tepat waktu.
+Catatan Siswa: Melihat catatan siswa yang diisi oleh Guru Pengampu sebagai bahan evaluasi.
+3. Guru Pengampu
+Absensi: Mencatat kehadiran siswa di setiap pelajaran.
+Laporan Statistik: Mengakses laporan absensi siswa untuk referensi pengajaran.
+Fitur Pengingat (Reminder): Sistem mengingatkan Guru Pengampu jika lupa mengabsensi siswa pada jam pelajaran tertentu.
+Catatan Siswa: Mengisi catatan untuk siswa, yang nantinya dapat dilihat oleh Wali Kelas untuk bahan evaluasi.
+4. Guru BK
+Pemanggilan Orang Tua: Membuat surat pemanggilan orang tua untuk siswa dengan masalah absensi atau perilaku.
+Laporan Pemanggilan Orang Tua: Melacak riwayat pemanggilan orang tua dan tindakan yang telah diambil.
+Fitur Pengingat (Reminder): Pengingat terkait tindak lanjut pemanggilan orang tua.
+Fitur-Fitur Utama Aplikasi:
+Absensi Siswa: Setiap Guru dapat mencatat kehadiran siswa.
+Laporan Absensi: Laporan absensi berdasarkan harian, mingguan, bulanan, dan per semester.
+Notifikasi Absensi: Wali Kelas menerima notifikasi jika ada siswa yang tidak hadir.
+Pemanggilan Orang Tua: Guru BK membuat dan mengelola surat pemanggilan orang tua.
+Pengingat (Reminder): Sistem pengingat untuk Guru Pengampu, Wali Kelas, dan Guru BK.
+Laporan Statistik: Admin, Wali Kelas, dan Guru Pengampu dapat mengakses laporan statistik absensi.
+Catatan Siswa: Guru Pengampu mengisi catatan siswa, yang dapat dilihat oleh Wali Kelas untuk bahan evaluasi.
+Struktur Database
+Tabel Users:
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+id (Primary Key)
+name
+email
+password
+role (Admin, Wali Kelas, Guru Pengampu, Guru BK)
+Tabel Students:
 
-## About Laravel
+id (Primary Key)
+name
+nis
+class_id (Foreign Key to Classes)
+status (Active, Inactive)
+Tabel Classes:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+id (Primary Key)
+name (Class name)
+teacher_id (Foreign Key to Users)
+Tabel Absences:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+id (Primary Key)
+student_id (Foreign Key to Students)
+date
+status (Absent, Present, Excused)
+reason (Optional)
+Tabel Parental Calls:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+id (Primary Key)
+student_id (Foreign Key to Students)
+date_of_call
+reason_for_call
+action_taken
+Tabel Notifications:
 
-## Learning Laravel
+id (Primary Key)
+user_id (Foreign Key to Users)
+message
+type (Absence, Reminder, Parental Call)
+status (Read, Unread)
+Tabel Notes:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+id (Primary Key)
+student_id (Foreign Key to Students)
+note (Content of the note)
+created_by (Foreign Key to Users, identifies who created the note)
+created_at
+Alur Pengguna
+Guru Pengampu:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Login → Mencatat Absensi → Mengakses Laporan Absensi → Mengisi Catatan Siswa → Menerima Pengingat jika lupa absensi.
+Wali Kelas:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Login → Mengelola Siswa → Menerima Notifikasi Absensi → Memberikan Keterangan Absensi → Melaporkan Ketidakhadiran Tinggi ke Guru BK → Mengakses Laporan Statistik → Melihat Catatan Siswa.
+Guru BK:
 
-## Laravel Sponsors
+Login → Melihat Laporan Ketidakhadiran → Membuat Pemanggilan Orang Tua → Mengakses Laporan Pemanggilan Orang Tua.
+Admin:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Login → Mengelola Data Siswa → Mengelola Pengguna → Mengakses Laporan Statistik.
