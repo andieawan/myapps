@@ -122,4 +122,114 @@ Berikut adalah **kerangka aplikasi absensi pembelajaran siswa** yang telah diper
 
 ---
 
-Jika ada tambahan atau koreksi, beri tahu saya!
+Berikut adalah pembaruan struktur database dengan kolom yang menggunakan bahasa Indonesia agar lebih mudah dipahami:
+
+---
+
+### **Struktur Database (Bahasa Indonesia)**
+
+#### 1. **Tabel `users`** (Pengguna)
+Menyimpan data pengguna aplikasi (Admin, Wali Kelas, Guru Pengampu, Guru BK).
+| Kolom              | Tipe Data    | Keterangan                                    |
+|---------------------|--------------|-----------------------------------------------|
+| id                 | INT (PK)     | Kunci utama.                                 |
+| nama               | VARCHAR(255) | Nama pengguna.                               |
+| email              | VARCHAR(255) | Email pengguna (unik).                       |
+| kata_sandi         | VARCHAR(255) | Kata sandi (terenkripsi).                    |
+| peran              | ENUM         | Peran pengguna (Admin, Wali Kelas, Guru Pengampu, Guru BK). |
+| dibuat_pada        | TIMESTAMP    | Waktu pembuatan akun.                        |
+| diperbarui_pada    | TIMESTAMP    | Waktu terakhir data diperbarui.              |
+
+---
+
+#### 2. **Tabel `students`** (Siswa)
+Menyimpan data siswa.
+| Kolom              | Tipe Data    | Keterangan                                    |
+|---------------------|--------------|-----------------------------------------------|
+| id                 | INT (PK)     | Kunci utama.                                 |
+| nama               | VARCHAR(255) | Nama siswa.                                  |
+| nis                | VARCHAR(50)  | Nomor Induk Siswa (unik).                    |
+| id_kelas           | INT (FK)     | Kunci asing mengacu ke tabel `classes`.      |
+| status             | ENUM         | Status siswa (Aktif, Tidak Aktif).           |
+| dibuat_pada        | TIMESTAMP    | Waktu pembuatan data siswa.                  |
+| diperbarui_pada    | TIMESTAMP    | Waktu terakhir data diperbarui.              |
+
+---
+
+#### 3. **Tabel `classes`** (Kelas)
+Menyimpan data kelas.
+| Kolom              | Tipe Data    | Keterangan                                    |
+|---------------------|--------------|-----------------------------------------------|
+| id                 | INT (PK)     | Kunci utama.                                 |
+| nama               | VARCHAR(255) | Nama kelas.                                  |
+| id_guru_walikelas  | INT (FK)     | Kunci asing mengacu ke tabel `users` (Wali Kelas). |
+| dibuat_pada        | TIMESTAMP    | Waktu pembuatan data kelas.                  |
+| diperbarui_pada    | TIMESTAMP    | Waktu terakhir data diperbarui.              |
+
+---
+
+#### 4. **Tabel `absences`** (Absensi)
+Menyimpan data absensi siswa.
+| Kolom              | Tipe Data    | Keterangan                                    |
+|---------------------|--------------|-----------------------------------------------|
+| id                 | INT (PK)     | Kunci utama.                                 |
+| id_siswa           | INT (FK)     | Kunci asing mengacu ke tabel `students`.     |
+| tanggal_absensi    | DATE         | Tanggal absensi.                             |
+| status_absensi     | ENUM         | Status absensi (Hadir, Tidak Hadir, Izin).   |
+| alasan             | TEXT         | Alasan ketidakhadiran (opsional).            |
+| dibuat_pada        | TIMESTAMP    | Waktu pembuatan data absensi.                |
+| diperbarui_pada    | TIMESTAMP    | Waktu terakhir data diperbarui.              |
+
+---
+
+#### 5. **Tabel `notes`** (Catatan)
+Menyimpan catatan untuk siswa dari Guru Pengampu.
+| Kolom              | Tipe Data    | Keterangan                                    |
+|---------------------|--------------|-----------------------------------------------|
+| id                 | INT (PK)     | Kunci utama.                                 |
+| id_siswa           | INT (FK)     | Kunci asing mengacu ke tabel `students`.     |
+| catatan            | TEXT         | Isi catatan.                                 |
+| dibuat_oleh        | INT (FK)     | Kunci asing mengacu ke tabel `users` (Guru Pengampu). |
+| dibuat_pada        | TIMESTAMP    | Waktu pembuatan catatan.                     |
+
+---
+
+#### 6. **Tabel `notifications`** (Notifikasi)
+Menyimpan notifikasi yang diterima oleh pengguna.
+| Kolom              | Tipe Data    | Keterangan                                    |
+|---------------------|--------------|-----------------------------------------------|
+| id                 | INT (PK)     | Kunci utama.                                 |
+| id_pengguna        | INT (FK)     | Kunci asing mengacu ke tabel `users`.        |
+| pesan_notifikasi   | TEXT         | Isi pesan notifikasi.                        |
+| jenis_notifikasi   | ENUM         | Jenis notifikasi (Absensi, Pengingat, Pemanggilan Orang Tua). |
+| status_notifikasi  | ENUM         | Status notifikasi (Terbaca, Belum Terbaca).  |
+| dibuat_pada        | TIMESTAMP    | Waktu pembuatan notifikasi.                  |
+
+---
+
+#### 7. **Tabel `parental_calls`** (Pemanggilan Orang Tua)
+Menyimpan data pemanggilan orang tua siswa.
+| Kolom                 | Tipe Data    | Keterangan                                  |
+|------------------------|--------------|---------------------------------------------|
+| id                   | INT (PK)     | Kunci utama.                               |
+| id_siswa             | INT (FK)     | Kunci asing mengacu ke tabel `students`.   |
+| tanggal_pemanggilan  | DATE         | Tanggal pemanggilan orang tua.             |
+| alasan_pemanggilan   | TEXT         | Alasan pemanggilan.                        |
+| tindakan_dilakukan   | TEXT         | Tindakan setelah pemanggilan.              |
+| dibuat_pada          | TIMESTAMP    | Waktu pembuatan data pemanggilan.          |
+
+---
+
+#### 8. **Tabel `reminders`** (Pengingat)
+Menyimpan data pengingat untuk berbagai aktivitas.
+| Kolom              | Tipe Data    | Keterangan                                    |
+|---------------------|--------------|-----------------------------------------------|
+| id                 | INT (PK)     | Kunci utama.                                 |
+| id_pengguna        | INT (FK)     | Kunci asing mengacu ke tabel `users`.        |
+| pesan_pengingat    | TEXT         | Isi pesan pengingat.                         |
+| tanggal_jatuh_tempo| DATE         | Tanggal pengingat harus diselesaikan.        |
+| dibuat_pada        | TIMESTAMP    | Waktu pembuatan pengingat.                   |
+
+---
+
+
